@@ -15,6 +15,7 @@ import numpy as np
 from glob import glob
 from importlib import reload
 import sys
+import shutil
 
 import torch
 import torch.nn as nn
@@ -34,7 +35,7 @@ import pysot.datasets.dataset
 from pysot.models.model_builder import ModelBuilder
 from pysot.core.config import cfg
 
-from par_crop import par_crop 
+from par_crop import par_crop
 from gen_json import gen_json
 
 logger = logging.getLogger('global')
@@ -45,6 +46,7 @@ parser.add_argument('-i', '--image-folder', required=True, help='Folder of image
 parser.add_argument('-s', '--save-folder', default='siamrpn++_model', help='Folder where logs/models/data is stored.')
 parser.add_argument('-c', '--config-file', required=True, help='Config file for architecture.')
 parser.add_argument('-t', '--threshold', required=True, help='GT confidence threshold.')
+parser.add_argument('--skip-crop', action='store_true', default=False, help='Add flag if you want to skip the data cropping (crop_511) step.')
 args = parser.parse_args()
 print(os.getcwd())
 os.chdir(os.path.dirname(os.path.dirname(args.image_folder)))
@@ -61,11 +63,13 @@ def seed_torch(seed=0):
 
 
 def prep_data():
-    if not os.path.isdir(os.path.join(args.save_folder, 'crop511')):
+    if not args.skip_crop:
+        if os.path.isdir(os.path.join(args.save_folder, 'crop511')):
+            shutil.rmtree(os.path.join(args.save_folder, 'crop511'))
         since = time.time()
         par_crop(511, 24, args.image_folder, args.save_folder)
         time_elapsed = time.time() - since
-        print('Total complete in {:.0f}m {:.0f}s'.format(
+        print('Data cropping complete in {:.0f}m {:.0f}s'.format(
             time_elapsed // 60, time_elapsed % 60))
 
     if not os.path.isfile(os.path.join(args.save_folder, 'dataset.json')):
