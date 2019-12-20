@@ -65,10 +65,10 @@ def crop_like_SiamFC(image, bbox, context_amount=0.5, exemplar_size=127, instanc
 
 def crop_video(video, image_folder, crop_path, instance_size):
     def get_im_num(line, adj=0):
-        return int(line[1][line[1].find('im')+len('im'):line[1].find('.png')])-adj
+        return int(line[2])
 
     def get_bbox(line):
-        return [int(i) for i in line[3:7]]
+        return [int(float(i)) for i in line[3:7]]
 
     video_crop_base_path = join(crop_path, video)
     if not isdir(video_crop_base_path): makedirs(video_crop_base_path)

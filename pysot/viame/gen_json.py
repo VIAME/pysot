@@ -5,10 +5,10 @@ from glob import glob
 
 def gen_json(image_folder, save_folder):
     def get_im_num(line, adj=0):
-        return int(line[1][line[1].find('im')+len('im'):line[1].find('.png')])-adj
+        return int(line[2])
 
     def get_bbox(line):
-        return [int(i) for i in line[3:7]]
+        return [int(float(i)) for i in line[3:7]]
 
     dataDir = '.'
     dataset = dict()
