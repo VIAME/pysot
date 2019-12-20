@@ -1,4 +1,4 @@
-from os.path import join
+from os.path import join, basename, dirname
 import json
 from glob import glob
 
@@ -25,7 +25,7 @@ def gen_json(image_folder, save_folder):
         for track in track_nums: tracks[track] = sorted(tracks[track], key=lambda x: x[1])
         min_im = min([get_im_num(tracks[track][0]) for track in track_nums])
         max_im = max([get_im_num(tracks[track][-1]) for track in track_nums])
-        video_crop_base_path = annFile.split('/')[-1][:annFile.split('/')[-1].find('.csv')]
+        video_crop_base_path = basename(dirname(annFile))
         dataset[video_crop_base_path] = dict()
         for track_idx, track in enumerate(track_nums):
             for line_idx, line in enumerate(tracks[track]):
