@@ -1,4 +1,4 @@
-from os.path import join, basename, dirname
+from os.path import join, basename, dirname, exists
 import json
 from glob import glob
 
@@ -31,6 +31,10 @@ def gen_json(image_folder, save_folder):
             for line_idx, line in enumerate(tracks[track]):
                 im_num = get_im_num(line, min_im)
                 bbox = get_bbox(line)
+                z_path = join(save_folder, "crop511", video_crop_base_path, f'{im_num:06}.{track_idx:02}.z.jpg')
+                x_path = join(save_folder, "crop511", video_crop_base_path, f'{im_num:06}.{track_idx:02}.x.jpg')
+                if not exists(z_path) or not exists(x_path):
+                    continue
                 if line_idx == 0:
                     dataset[video_crop_base_path][f'{track_idx:02}'] = {f'{im_num:06}': bbox}
                 else:

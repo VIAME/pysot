@@ -72,8 +72,7 @@ def prep_data():
         print('Data cropping complete in {:.0f}m {:.0f}s'.format(
             time_elapsed // 60, time_elapsed % 60))
 
-    if not os.path.isfile(os.path.join(args.save_folder, 'dataset.json')):
-        gen_json(args.image_folder, args.save_folder)
+    gen_json(args.image_folder, args.save_folder)
 
     import pysot.core.config as cfg_file
     core_cfg = cfg_file.__file__

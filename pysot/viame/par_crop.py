@@ -70,6 +70,22 @@ def crop_video(video, image_folder, crop_path, instance_size):
     def get_bbox(line):
         return [int(float(i)) for i in line[3:7]]
 
+    def box_overlap(b1, b2):
+        x_left = max( b1[0], b2[0] )
+        y_top = max( b1[1], b2[1] )
+        x_right = min( b1[2], b2[2] )
+        y_bottom = min( b1[3], b2[3] )
+
+        if x_right < x_left or y_bottom < y_top:
+            return 0.0
+
+        intersection_area = ( x_right - x_left ) * ( y_bottom - y_top )
+        bb1_area = ( b1[2] - b1[0] ) * ( b1[3] - b1[1] )
+        if bb1_area == 0:
+            return 0.0
+
+        return float( intersection_area ) / bb1_area
+
     video_crop_base_path = join(crop_path, video)
     if not isdir(video_crop_base_path): makedirs(video_crop_base_path)
     csv = glob(join(image_folder, video, '*.csv'))
@@ -93,6 +109,8 @@ def crop_video(video, image_folder, crop_path, instance_size):
             bbox = get_bbox(line)
             im = cv2.imread(join(image_folder, video, line[1]))
             assert not im is None, "Missing image."
+            if box_overlap( bbox, [ 0, 0, im.shape[0], im.shape[1] ] ) < 0.20:
+                continue
             avg_chans = np.mean(im, axis=(0, 1))
             z, x = crop_like_SiamFC(im, bbox, instance_size=instance_size, padding=avg_chans)
             z_path = join(video_crop_base_path, f'{im_num:06}.{idx:02}.z.jpg')
