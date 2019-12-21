@@ -109,7 +109,7 @@ def crop_video(video, image_folder, crop_path, instance_size):
             bbox = get_bbox(line)
             im = cv2.imread(join(image_folder, video, line[1]))
             assert not im is None, "Missing image."
-            if box_overlap( bbox, [ 0, 0, im.shape[0], im.shape[1] ] ) < 0.20:
+            if box_overlap( bbox, [ 0, 0, im.shape[0], im.shape[1] ] ) < 0.50:
                 continue
             avg_chans = np.mean(im, axis=(0, 1))
             z, x = crop_like_SiamFC(im, bbox, instance_size=instance_size, padding=avg_chans)
