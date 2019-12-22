@@ -1,9 +1,8 @@
-from os.path import join, isdir
+from os.path import join, isdir, exists
 from os import listdir, mkdir, makedirs
 from tqdm import tqdm
 import cv2
 import numpy as np
-import glob
 import xml.etree.ElementTree as ET
 from concurrent import futures
 import sys
@@ -103,13 +102,21 @@ def crop_video(video, image_folder, crop_path, instance_size):
     for track in track_nums: tracks[track] = sorted(tracks[track], key=lambda x: x[1])
     min_im = min([get_im_num(tracks[track][0]) for track in track_nums])
     max_im = max([get_im_num(tracks[track][-1]) for track in track_nums])
+    image_files = []
+    common_ext = [ "*.png", "*.jpg", "*.jpeg", "*.PNG", "*.JPG", "*.JPEG" ]
+    for ext in common_ext:
+        image_files.extend(glob(join(image_folder, video, ext)))
+    image_files = sorted(image_files)
     for idx, track in enumerate(track_nums):
         for line in tqdm(tracks[track]):
             im_num = get_im_num(line, min_im)
             bbox = get_bbox(line)
-            im = cv2.imread(join(image_folder, video, line[1]))
+            image_file = join(image_folder, video, line[1])
+            if not exists(image_file) and len(image_files) > int(line[2]):
+                image_file = image_files[int(line[2])]
+            im = cv2.imread(image_file)
             assert not im is None, "Missing image."
-            if box_overlap( bbox, [ 0, 0, im.shape[0], im.shape[1] ] ) < 0.50:
+            if box_overlap(bbox, [ 0, 0, im.shape[0], im.shape[1] ]) < 0.50:
                 continue
             avg_chans = np.mean(im, axis=(0, 1))
             z, x = crop_like_SiamFC(im, bbox, instance_size=instance_size, padding=avg_chans)
