@@ -75,7 +75,7 @@ def crop_video(video, image_folder, crop_path, instance_size):
         x_right = min( b1[2], b2[2] )
         y_bottom = min( b1[3], b2[3] )
 
-        if x_right < x_left or y_bottom < y_top:
+        if x_right <= x_left or y_bottom <= y_top:
             return 0.0
 
         intersection_area = ( x_right - x_left ) * ( y_bottom - y_top )
