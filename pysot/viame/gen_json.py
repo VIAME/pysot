@@ -31,14 +31,14 @@ def gen_json(image_folder, save_folder):
             for line_idx, line in enumerate(tracks[track]):
                 im_num = get_im_num(line, min_im)
                 bbox = get_bbox(line)
-                z_path = join(save_folder, "crop511", video_crop_base_path, f'{im_num:06}.{track_idx:02}.z.jpg')
-                x_path = join(save_folder, "crop511", video_crop_base_path, f'{im_num:06}.{track_idx:02}.x.jpg')
+                z_path = join(save_folder, "crop511", video_crop_base_path, f'{im_num:08}.{track_idx:08}.z.jpg')
+                x_path = join(save_folder, "crop511", video_crop_base_path, f'{im_num:08}.{track_idx:08}.x.jpg')
                 if not exists(z_path) or not exists(x_path):
                     continue
-                if line_idx == 0:
-                    dataset[video_crop_base_path][f'{track_idx:02}'] = {f'{im_num:06}': bbox}
+                if line_idx == 0 or f'{track_idx:08}' not in dataset[video_crop_base_path]:
+                    dataset[video_crop_base_path][f'{track_idx:08}'] = {f'{im_num:08}': bbox}
                 else:
-                    dataset[video_crop_base_path][f'{track_idx:02}'][f'{im_num:06}'] = bbox
+                    dataset[video_crop_base_path][f'{track_idx:08}'][f'{im_num:08}'] = bbox
 
     print('save json (dataset), please wait 20 seconds~')
     json.dump(dataset, open(join(save_folder, 'dataset.json'), 'w'), indent=4, sort_keys=True)

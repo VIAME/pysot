@@ -120,8 +120,8 @@ def crop_video(video, image_folder, crop_path, instance_size):
                 continue
             avg_chans = np.mean(im, axis=(0, 1))
             z, x = crop_like_SiamFC(im, bbox, instance_size=instance_size, padding=avg_chans)
-            z_path = join(video_crop_base_path, f'{im_num:06}.{idx:02}.z.jpg')
-            x_path = join(video_crop_base_path, f'{im_num:06}.{idx:02}.x.jpg')
+            z_path = join(video_crop_base_path, f'{im_num:08}.{idx:08}.z.jpg')
+            x_path = join(video_crop_base_path, f'{im_num:08}.{idx:08}.x.jpg')
             cv2.imwrite(x_path, x)
             cv2.imwrite(z_path, z)
 
