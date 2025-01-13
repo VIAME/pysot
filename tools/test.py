@@ -103,10 +103,10 @@ def main():
                 if idx == 0:
                     cv2.destroyAllWindows()
                 if args.vis and idx > frame_counter:
-                    cv2.polylines(img, [np.array(gt_bbox, np.int).reshape((-1, 1, 2))],
+                    cv2.polylines(img, [np.array(gt_bbox, np.int32).reshape((-1, 1, 2))],
                             True, (0, 255, 0), 3)
                     if cfg.MASK.MASK:
-                        cv2.polylines(img, [np.array(pred_bbox, np.int).reshape((-1, 1, 2))],
+                        cv2.polylines(img, [np.array(pred_bbox, np.int32).reshape((-1, 1, 2))],
                                 True, (0, 255, 255), 3)
                     else:
                         bbox = list(map(int, pred_bbox))
